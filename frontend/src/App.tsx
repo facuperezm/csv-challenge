@@ -1,8 +1,8 @@
 import React from "react";
-import "./App.css";
 import { uploadFiles } from "./server/upload";
 import { toast, Toaster } from "sonner";
 import { Data } from "./types";
+import Search from "./components/search";
 
 const APP_STATUS = {
   IDLE: "idle",
@@ -66,7 +66,9 @@ function App() {
     <>
       <Toaster />
       <header>
-        <h1>FullStack Application - CSV Challenge</h1>
+        <h1 className="text-2xl font-mono">
+          FullStack Application - CSV Challenge
+        </h1>
       </header>
       <main>
         <form onSubmit={handleFileSubmit}>
@@ -84,20 +86,7 @@ function App() {
             </button>
           )}
         </form>
-        {appStatus === APP_STATUS.COMPLETED && (
-          <section>
-            <h2>File uploaded successfully</h2>
-            <pre>{JSON.stringify(data, null, 2)}</pre>
-
-            <button onClick={() => setAppStatus(APP_STATUS.READY)}>
-              Upload another file
-            </button>
-          </section>
-        )}
-
-        {/* <form>
-          <input type="text" name="search" />
-        </form> */}
+        {appStatus === APP_STATUS.COMPLETED && <Search initialData={data} />}
       </main>
     </>
   );
