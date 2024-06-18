@@ -4,13 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port=4000",
+    "dev": "VITE_API_HOST=http://localhost:3000 vite --port=4000",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "sonner": "^1.5.0"
   },
   "devDependencies": {
     "@types/react": "18.2.66",
