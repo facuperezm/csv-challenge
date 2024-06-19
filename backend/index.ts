@@ -70,5 +70,5 @@ app.get("/api/users", async (req, res) => {
 });
 
 app.listen(port, () => {
-  `🏃‍♂️‍➡️ El servidor está corriendo en http://localhost:${port}`;
+  console.log(`🔥 Backend server running on http://localhost:${port}`);
 });
