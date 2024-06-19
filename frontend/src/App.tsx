@@ -3,6 +3,9 @@ import { uploadFiles } from "./server/upload";
 import { toast, Toaster } from "sonner";
 import { Data } from "./types";
 import Search from "./components/search";
+import { Input } from "./components/ui/input";
+import { Button } from "./components/ui/button";
+import { Label } from "./components/ui/label";
 
 const APP_STATUS = {
   IDLE: "idle",
@@ -15,6 +18,8 @@ const APP_STATUS = {
 const buttonMessage = {
   [APP_STATUS.READY]: "Upload file",
   [APP_STATUS.UPLOADING]: "Uploading",
+  [APP_STATUS.ERROR]: "Try again",
+  [APP_STATUS.COMPLETED]: "Upload another file",
 };
 
 type AppStatusType = (typeof APP_STATUS)[keyof typeof APP_STATUS];
@@ -26,13 +31,22 @@ function App() {
   const [file, setFile] = React.useState<File | null>(null);
   const [data, setData] = React.useState<Data | null>(null);
 
+  function handleResetForm() {
+    setAppStatus(APP_STATUS.IDLE);
+    setFile(null);
+    setData(null);
+
+    // Reset the URL
+    window.history.pushState({}, "", window.location.pathname);
+  }
+
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const [file] = e.target.files ?? [];
 
     if (!file) {
       throw new Error("Missing file");
     }
-
+    console.log(file, "file");
     setFile(file);
     setAppStatus(APP_STATUS.READY);
   }
@@ -62,33 +76,44 @@ function App() {
     appStatus === APP_STATUS.READY ||
     appStatus === APP_STATUS.ERROR ||
     appStatus === APP_STATUS.UPLOADING;
+
   return (
-    <>
+    <div className="max-w-3xl mx-auto px-4">
       <Toaster />
-      <header>
+      <header className="text-center py-6">
         <h1 className="text-2xl font-mono">
           FullStack Application - CSV Challenge
         </h1>
       </header>
       <main>
-        <form onSubmit={handleFileSubmit}>
-          <label htmlFor="files">
-            <input
+        <form
+          className="flex flex-col md:flex-row gap-4 mx-auto max-w-lg justify-between"
+          onSubmit={handleFileSubmit}
+        >
+          <Label htmlFor="files">
+            <Input
               type="file"
               name="file"
               accept=".csv"
               onChange={handleFileChange}
+              className="w-full"
             />
-          </label>
+          </Label>
           {showButton && (
-            <button disabled={appStatus === APP_STATUS.UPLOADING}>
+            <Button disabled={appStatus === APP_STATUS.UPLOADING}>
               {buttonMessage[appStatus] ?? "Upload file"}
-            </button>
+            </Button>
+          )}
+
+          {appStatus === APP_STATUS.COMPLETED && (
+            <Button onClick={handleResetForm}>Upload another file</Button>
           )}
         </form>
-        {appStatus === APP_STATUS.COMPLETED && <Search initialData={data} />}
+        <div className="mt-4">
+          {appStatus === APP_STATUS.COMPLETED && <Search initialData={data} />}
+        </div>
       </main>
-    </>
+    </div>
   );
 }
 
