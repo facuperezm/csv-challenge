@@ -28,12 +28,10 @@ app.post("/api/files", upload.single("file"), async (req, res) => {
   let finalJson: Array<Record<string, string>> = [];
   try {
     const csv = Buffer.from(file.buffer).toString("utf-8");
-    console.log(csv, "result");
 
     // Parse the CSV and assert the type of the data property
     const parseResult: ParseResult<unknown> = parse(csv, { header: true });
     finalJson = parseResult.data as Array<Record<string, string>>;
-    console.log(finalJson, "jsonfile");
   } catch (error) {
     return res.status(500).json({ message: "Error parsing the file" });
   }
@@ -48,9 +46,7 @@ app.get("/api/users", async (req, res) => {
   const { q } = req.query;
 
   if (!q) {
-    return res
-      .status(500)
-      .json({ message: "You need to provide the `q` query" });
+    return res.status(200).json({ data: data });
   }
 
   if (Array.isArray(q)) {
