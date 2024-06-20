@@ -1,0 +1,11 @@
+product_id,product_name,category,price,stock_quantity
+101,Apple iPhone 13,Electronics,799,150
+102,Samsung Galaxy S21,Electronics,699,200
+103,HP Spectre x360,Laptops,999,50
+104,Dell XPS 13,Laptops,1099,30
+105,Sony WH-1000XM4,Headphones,349,100
+106,Bose QuietComfort 35 II,Headphones,299,80
+107,Apple MacBook Air,Laptops,999,40
+108,Google Pixel 6,Electronics,599,120
+109,Amazon Echo Dot,Smart Home,49,500
+110,Philips Hue Bulb,Smart Home,29,300
