@@ -1,14 +1,11 @@
 import React from "react";
 import { uploadFiles } from "./server/upload";
 import { Toaster } from "sonner";
-import { Data } from "./types";
 import Search from "./components/search";
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
 import { Label } from "./components/ui/label";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { queryClient } from "./lib/react-query";
-import { searchFiles } from "./server/search";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const APP_STATUS = {
   IDLE: "idle",
@@ -32,6 +29,7 @@ function App() {
     APP_STATUS.IDLE
   );
   const [file, setFile] = React.useState<File | null>(null);
+  const queryClient = useQueryClient();
 
   function handleResetForm() {
     setAppStatus(APP_STATUS.IDLE);
