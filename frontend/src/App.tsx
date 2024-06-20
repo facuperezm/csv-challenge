@@ -1,11 +1,14 @@
 import React from "react";
 import { uploadFiles } from "./server/upload";
-import { toast, Toaster } from "sonner";
+import { Toaster } from "sonner";
 import { Data } from "./types";
 import Search from "./components/search";
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
 import { Label } from "./components/ui/label";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryClient } from "./lib/react-query";
+import { searchFiles } from "./server/search";
 
 const APP_STATUS = {
   IDLE: "idle",
@@ -29,12 +32,10 @@ function App() {
     APP_STATUS.IDLE
   );
   const [file, setFile] = React.useState<File | null>(null);
-  const [data, setData] = React.useState<Data | null>(null);
 
   function handleResetForm() {
     setAppStatus(APP_STATUS.IDLE);
     setFile(null);
-    setData(null);
 
     // Reset the URL
     window.history.pushState({}, "", window.location.pathname);
@@ -46,30 +47,26 @@ function App() {
     if (!file) {
       throw new Error("Missing file");
     }
-    console.log(file, "file");
     setFile(file);
     setAppStatus(APP_STATUS.READY);
   }
 
+  const { mutate } = useMutation({
+    mutationFn: uploadFiles,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["search"] });
+    },
+  });
+
   async function handleFileSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (!file) {
-      throw new Error("Missing file");
+    if (file) {
+      mutate(file);
+      setAppStatus(APP_STATUS.COMPLETED);
+    } else {
+      console.error("No file selected");
     }
-
-    setAppStatus(APP_STATUS.UPLOADING);
-    const res = await uploadFiles(file);
-
-    if (res instanceof Error) {
-      setAppStatus(APP_STATUS.ERROR);
-      toast.error(res.message);
-      return;
-    }
-
-    setData(res);
-    setAppStatus(APP_STATUS.COMPLETED);
-    toast.success("The file was uploaded successfully");
   }
 
   const showButton =
@@ -110,7 +107,7 @@ function App() {
           )}
         </form>
         <div className="mt-4">
-          {appStatus === APP_STATUS.COMPLETED && <Search initialData={data} />}
+          {appStatus === APP_STATUS.COMPLETED && <Search />}
         </div>
       </main>
     </div>
