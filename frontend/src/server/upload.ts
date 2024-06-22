@@ -4,7 +4,6 @@ import { ApiResponseData, type Data } from "../types";
 export const uploadFiles = async (file: File): Promise<Data | Error> => {
   const fd = new FormData();
   fd.append("file", file);
-
   try {
     const res = await fetch(`${API_HOST}/api/files`, {
       method: "POST",
@@ -12,15 +11,17 @@ export const uploadFiles = async (file: File): Promise<Data | Error> => {
     });
 
     if (!res.ok) {
-      return new Error("The file was not uploaded");
+      const message = await res.text().catch(() => "The file was not uploaded");
+      throw new Error(message);
     }
 
     const json = (await res.json()) as ApiResponseData;
-
     return json.data;
   } catch (error) {
-    return error instanceof Error
-      ? error
-      : new Error("An error occurred during file upload");
+    if (error instanceof Error) {
+      throw error;
+    } else {
+      throw new Error("An unknown error occurred during file upload");
+    }
   }
 };

@@ -1,6 +1,6 @@
 import React from "react";
 import { uploadFiles } from "./server/upload";
-import { Toaster } from "sonner";
+import { toast, Toaster } from "sonner";
 import Search from "./components/search";
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
@@ -19,7 +19,7 @@ const buttonMessage = {
   [APP_STATUS.READY]: "Upload file",
   [APP_STATUS.UPLOADING]: "Uploading",
   [APP_STATUS.ERROR]: "Try again",
-  [APP_STATUS.COMPLETED]: "Upload another file",
+  [APP_STATUS.COMPLETED]: "Remove current file",
 };
 
 type AppStatusType = (typeof APP_STATUS)[keyof typeof APP_STATUS];
@@ -30,6 +30,11 @@ function App() {
   );
   const [file, setFile] = React.useState<File | null>(null);
   const queryClient = useQueryClient();
+
+  function handleError(error: Error) {
+    toast.error(error.message || "An unexpected error occurred");
+    setAppStatus(APP_STATUS.ERROR);
+  }
 
   function handleResetForm() {
     setAppStatus(APP_STATUS.IDLE);
@@ -49,28 +54,36 @@ function App() {
     setAppStatus(APP_STATUS.READY);
   }
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: uploadFiles,
+    onMutate: () => {
+      setAppStatus(APP_STATUS.UPLOADING);
+    },
+    onError: (error) => {
+      handleError(error);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["search"] });
+      setAppStatus(APP_STATUS.COMPLETED);
+      toast.success("File uploaded successfully!");
     },
   });
 
   async function handleFileSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (file) {
-      mutate(file);
-      setAppStatus(APP_STATUS.COMPLETED);
-    } else {
-      console.error("No file selected");
+    if (!file) {
+      handleError(new Error("Error: no file selected"));
+      return;
     }
+    mutate(file);
   }
 
   const showButton =
     appStatus === APP_STATUS.READY ||
-    appStatus === APP_STATUS.ERROR ||
-    appStatus === APP_STATUS.UPLOADING;
+    appStatus === APP_STATUS.COMPLETED ||
+    appStatus === APP_STATUS.UPLOADING ||
+    appStatus === APP_STATUS.ERROR;
 
   return (
     <div className="max-w-3xl mx-auto px-4">
@@ -81,32 +94,38 @@ function App() {
         </h1>
       </header>
       <main>
-        <form
-          className="flex flex-col md:flex-row gap-4 mx-auto max-w-lg justify-between"
-          onSubmit={handleFileSubmit}
-        >
-          <Label htmlFor="files">
-            <Input
-              type="file"
-              name="file"
-              accept=".csv"
-              onChange={handleFileChange}
-              className="w-full"
-            />
-          </Label>
-          {showButton && (
-            <Button disabled={appStatus === APP_STATUS.UPLOADING}>
-              {buttonMessage[appStatus] ?? "Upload file"}
-            </Button>
-          )}
-
-          {appStatus === APP_STATUS.COMPLETED && (
+        {appStatus !== APP_STATUS.COMPLETED && (
+          <form
+            className="flex flex-col md:flex-row gap-4 mx-auto max-w-lg justify-between"
+            onSubmit={handleFileSubmit}
+          >
+            <Label htmlFor="files">
+              <Input
+                type="file"
+                name="file"
+                accept=".csv"
+                onChange={handleFileChange}
+                className="w-full"
+              />
+            </Label>
+            {showButton && (
+              <Button
+                disabled={appStatus === APP_STATUS.UPLOADING || isPending}
+              >
+                {buttonMessage[appStatus] ?? "Upload file"}
+              </Button>
+            )}
+          </form>
+        )}
+        {appStatus === APP_STATUS.COMPLETED && (
+          <div className="flex gap-4 items-center pb-4 justify-center">
+            <p className="text-muted-foreground text-sm truncate">
+              File uploaded: {file ? file.name : ".csv"}
+            </p>
             <Button onClick={handleResetForm}>Upload another file</Button>
-          )}
-        </form>
-        <div className="mt-4">
-          {appStatus === APP_STATUS.COMPLETED && <Search />}
-        </div>
+          </div>
+        )}
+        <div>{appStatus === APP_STATUS.COMPLETED && <Search />}</div>
       </main>
     </div>
   );
