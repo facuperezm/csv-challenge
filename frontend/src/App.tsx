@@ -106,6 +106,7 @@ export default function App() {
                 accept=".csv"
                 onChange={handleFileChange}
                 className="w-full"
+                placeholder="Upload a .csv file"
               />
             </Label>
             {showButton && (
