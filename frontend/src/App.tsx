@@ -24,7 +24,7 @@ const buttonMessage = {
 
 type AppStatusType = (typeof APP_STATUS)[keyof typeof APP_STATUS];
 
-function App() {
+export default function App() {
   const [appStatus, setAppStatus] = React.useState<AppStatusType>(
     APP_STATUS.IDLE
   );
@@ -130,5 +130,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

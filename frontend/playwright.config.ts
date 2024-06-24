@@ -4,8 +4,7 @@ export default defineConfig({
   testDir: "./test",
   testMatch: /.*\.e2e-spec\.ts$/,
   fullyParallel: true,
-  retries: 1,
-  workers: 1,
+  workers: undefined,
   reporter: "html",
   use: {
     baseURL: "http://localhost:4000",
