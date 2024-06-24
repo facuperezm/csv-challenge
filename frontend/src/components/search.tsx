@@ -33,6 +33,7 @@ export default function Search() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["search", debouncedSearch],
     queryFn: () => searchFiles(debouncedSearch),
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
   return (
