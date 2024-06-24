@@ -1,6 +1,4 @@
-# CSV Challenge
-
-## Fullstack Challenge
+# CSV Challenge - Fullstack Application
 
 <img src='./screenshot.png'>
 
