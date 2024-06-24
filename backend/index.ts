@@ -35,7 +35,6 @@ app.post("/api/files", upload.single("file"), async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: "Error parsing the file" });
   }
-  // TODO: change to real DB
   data = finalJson;
   return res
     .status(200)
