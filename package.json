@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "pnpm --filter '**' dev",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "pnpm run test:unit && pnpm run test:e2e",
+    "test:unit": "pnpm --filter frontend test:unit",
+    "test:e2e": "pnpm --filter frontend test:e2e",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "keywords": [],
