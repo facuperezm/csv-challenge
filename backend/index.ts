@@ -1,9 +1,9 @@
-import express from "express";
+import express, { Express } from "express";
 import cors from "cors";
 import multer from "multer";
 import { parse, ParseResult } from "papaparse";
 
-const app = express();
+const app: Express = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
@@ -20,7 +20,7 @@ app.post("/api/files", upload.single("file"), async (req, res) => {
     return res.status(500).json({ message: "The file was missing" });
   }
 
-  if (!file) {
+  if (file.mimetype !== "text/csv") {
     return res.status(500).json({ message: "The file must be a .csv file" });
   }
 
@@ -67,3 +67,5 @@ app.get("/api/users", async (req, res) => {
 app.listen(port, () => {
   console.log(`🔥 Backend server running on http://localhost:${port}`);
 });
+
+export default app;

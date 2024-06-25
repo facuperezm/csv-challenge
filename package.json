@@ -5,13 +5,15 @@
   "main": "index.js",
   "scripts": {
     "dev": "pnpm --filter '**' dev",
-    "test": "pnpm run test:unit && pnpm run test:e2e",
+    "test": "vitest",
     "test:unit": "pnpm --filter frontend test:unit",
     "test:e2e": "pnpm --filter frontend test:e2e",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "keywords": [],
-  "dependencies": {},
+  "dependencies": {
+    "vitest": "^1.6.0"
+  },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "7.2.0",
     "@typescript-eslint/parser": "7.2.0",
@@ -19,7 +21,6 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-react-refresh": "0.4.6",
     "typescript": "^5.2.2"
-
   },
   "author": "",
   "license": "ISC"
