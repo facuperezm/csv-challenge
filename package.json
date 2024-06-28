@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "pnpm --filter '**' dev",
-    "test": "vitest",
+    "test": "vitest && pnpm --filter frontend test:e2e",
     "test:unit": "pnpm --filter frontend test:unit",
-    "test:e2e": "pnpm --filter frontend test:e2e",
+    "test:e2e": "pnpm dev & pnpm --filter frontend test:e2e",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "keywords": [],
